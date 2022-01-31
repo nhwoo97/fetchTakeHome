@@ -1,24 +1,71 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import Registration from "./Registration";
+
+const initialFormValues = {
+  name: "",
+  email: "",
+  password: "",
+  occupation: "",
+  state: "",
+};
 
 function App() {
+  //Setting up form values
+  const [formValue, setFormValue] = useState(initialFormValues);
+
+  //onChange handler
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setFormValue({ ...formValue, [name]: value });
+  };
+
+  const navigate = useNavigate();
+
+  //onSubmit handler
+  const onSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("https://frontend-take-home.fetchrewards.com/form", formValue)
+      .then((res) => {
+        console.log("posted!");
+        navigate("/success");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  //state for retrieved data, starts with dummy data
+  const [retrieve, setRetrieve] = useState({
+    occupations: ["loading occupations"],
+    states: [{ name: "loading state", abbreviation: "loading abbreviation" }],
+  });
+
+  //At the start of the app, a get request is made
+  useEffect(() => {
+    axios
+      .get("https://frontend-take-home.fetchrewards.com/form")
+      .then((res) => {
+        setRetrieve(res.data);
+        console.log("get request successful!");
+      })
+      .catch((error) => {
+        console.error("Server Error", error);
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Registration
+        retrieve={retrieve}
+        formValue={formValue}
+        onChange={onChange}
+        onSubmit={onSubmit}
+      />
+    </>
   );
 }
 

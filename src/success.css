@@ -1,0 +1,25 @@
+.success {
+  min-height: 100vh;
+  background-color: black;
+}
+h1 {
+  color: #4bb543;
+}
+/* body {
+  background-color: black;
+} */
+
+.blinking {
+  animation: blinkingText 1.2s infinite;
+}
+@keyframes blinkingText {
+  100% {
+    color: red;
+  }
+  51% {
+    color: green;
+  }
+  1% {
+    color: blue;
+  }
+}
